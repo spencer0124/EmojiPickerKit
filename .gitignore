@@ -1,0 +1,23 @@
+# Xcode
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+*.xcscmblueprint
+
+# Tuist generated
+Derived/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Misc
+*.moved-aside
+*.hmap
+*.ipa
