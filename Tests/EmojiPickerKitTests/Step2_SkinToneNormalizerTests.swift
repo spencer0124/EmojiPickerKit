@@ -62,21 +62,57 @@ final class Step2_SkinToneNormalizerTests: XCTestCase {
         XCTAssertEqual("😊".normalizingSkinTone(to: .dark), "😊")
     }
 
-    // MARK: - ZWJ sequences → unchanged
+    // MARK: - ZWJ sequences
 
-    func test_zwj_skinToneHair_stripUnchanged() {
-        let emoji = "👩🏽‍🦰"
-        XCTAssertEqual(emoji.normalizingSkinTone(to: .strip), emoji)
+    func test_zwj_skinToneHair_stripRemovesTone() {
+        // 👩🏽‍🦰 → strip → 👩‍🦰
+        XCTAssertEqual("👩🏽‍🦰".normalizingSkinTone(to: .strip), "👩‍🦰")
     }
 
-    func test_zwj_family_darkUnchanged() {
-        let emoji = "👨‍👩‍👧‍👦"
-        XCTAssertEqual(emoji.normalizingSkinTone(to: .dark), emoji)
+    func test_zwj_skinToneHair_replaceTone() {
+        // 👩🏽‍🦰 → dark → 👩🏿‍🦰
+        XCTAssertEqual("👩🏽‍🦰".normalizingSkinTone(to: .dark), "👩🏿‍🦰")
     }
 
-    func test_zwj_profession_lightUnchanged() {
-        let emoji = "👩‍💻"
-        XCTAssertEqual(emoji.normalizingSkinTone(to: .light), emoji)
+    func test_zwj_family_darkAppliesToAllMembers() {
+        // 👨‍👩‍👧‍👦 → dark → all four members get dark skin tone
+        XCTAssertEqual(
+            "👨‍👩‍👧‍👦".normalizingSkinTone(to: .dark),
+            "👨🏿‍👩🏿‍👧🏿‍👦🏿"
+        )
+    }
+
+    func test_zwj_familyStrip_removesAllTones() {
+        // 👨🏿‍👩🏿‍👧🏿‍👦🏿 → strip → 👨‍👩‍👧‍👦
+        XCTAssertEqual(
+            "👨🏿‍👩🏿‍👧🏿‍👦🏿".normalizingSkinTone(to: .strip),
+            "👨‍👩‍👧‍👦"
+        )
+    }
+
+    func test_zwj_profession_lightAppliesTone() {
+        // 👩‍💻 → light → 👩🏻‍💻
+        XCTAssertEqual("👩‍💻".normalizingSkinTone(to: .light), "👩🏻‍💻")
+    }
+
+    func test_zwj_profession_replaceTone() {
+        // 🧑🏿‍💻 → medium → 🧑🏽‍💻
+        XCTAssertEqual("🧑🏿‍💻".normalizingSkinTone(to: .medium), "🧑🏽‍💻")
+    }
+
+    func test_zwj_genderedActivity_stripRemovesTone() {
+        // 🏃🏽‍♀️ → strip → 🏃‍♀️
+        XCTAssertEqual("🏃🏽‍♀️".normalizingSkinTone(to: .strip), "🏃‍♀️")
+    }
+
+    func test_zwj_genderedActivity_applyTone() {
+        // 🏃‍♀️ → dark → 🏃🏿‍♀️
+        XCTAssertEqual("🏃‍♀️".normalizingSkinTone(to: .dark), "🏃🏿‍♀️")
+    }
+
+    func test_zwj_nonPersonEmoji_unchanged() {
+        // 🏳️‍🌈 — no modifier base, stays unchanged
+        XCTAssertEqual("🏳️‍🌈".normalizingSkinTone(to: .dark), "🏳️‍🌈")
     }
 
     // MARK: - Edge cases

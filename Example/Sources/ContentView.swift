@@ -13,7 +13,7 @@ struct ContentView: View {
     // MARK: - Config options
     @State private var showConfigPicker = false
     @State private var configEmoji: String = "👋🏽"
-    @State private var skinToneMode: Int = 0 // 0=nil, 1=strip, 2=dark
+    @State private var skinToneMode: Int = 0
 
     var body: some View {
         NavigationStack {
@@ -24,7 +24,7 @@ struct ContentView: View {
                         Text(selectedEmoji)
                             .font(.system(size: 64))
                         Spacer()
-                        Button("이모지 선택") {
+                        Button("Select Emoji") {
                             showSinglePicker = true
                         }
                         .buttonStyle(.borderedProminent)
@@ -33,21 +33,21 @@ struct ContentView: View {
                 } header: {
                     Text("Single Mode")
                 } footer: {
-                    Text("이모지 1개 선택 → 즉시 dismiss (Reminders 스타일)")
+                    Text("Select 1 emoji → auto dismiss (Reminders style)")
                 }
 
                 // ─── Multiple Mode ───
                 Section {
                     HStack {
                         if collectedEmojis.isEmpty {
-                            Text("선택된 이모지 없음")
+                            Text("No emoji selected")
                                 .foregroundStyle(.secondary)
                         } else {
                             Text(collectedEmojis.joined())
                                 .font(.system(size: 32))
                         }
                         Spacer()
-                        Button("이모지 추가") {
+                        Button("Add Emoji") {
                             showMultiplePicker = true
                         }
                         .buttonStyle(.borderedProminent)
@@ -55,29 +55,33 @@ struct ContentView: View {
                     .padding(.vertical, 8)
 
                     if !collectedEmojis.isEmpty {
-                        Button("초기화", role: .destructive) {
+                        Button("Clear", role: .destructive) {
                             collectedEmojis.removeAll()
                         }
                     }
                 } header: {
                     Text("Multiple Mode")
                 } footer: {
-                    Text("여러 이모지 연속 선택 가능. 완료 버튼으로 dismiss.")
+                    Text("Select multiple emojis. Tap Done to dismiss.")
                 }
 
                 // ─── SkinTone Normalization ───
                 Section {
-                    Picker("스킨톤 정규화", selection: $skinToneMode) {
-                        Text("없음 (nil)").tag(0)
-                        Text("Strip (제거)").tag(1)
-                        Text("Dark (🏿)").tag(2)
+                    Picker("Skin Tone", selection: $skinToneMode) {
+                        Text("None").tag(0)
+                        Text("Strip").tag(1)
+                        Text("Light (🏻)").tag(2)
+                        Text("Medium-Light (🏼)").tag(3)
+                        Text("Medium (🏽)").tag(4)
+                        Text("Medium-Dark (🏾)").tag(5)
+                        Text("Dark (🏿)").tag(6)
                     }
 
                     HStack {
                         Text(configEmoji)
                             .font(.system(size: 64))
                         Spacer()
-                        Button("이모지 선택") {
+                        Button("Select Emoji") {
                             showConfigPicker = true
                         }
                         .buttonStyle(.bordered)
@@ -86,7 +90,7 @@ struct ContentView: View {
                 } header: {
                     Text("Configuration Test")
                 } footer: {
-                    Text("스킨톤이 있는 이모지를 선택하면 정규화가 적용됩니다.")
+                    Text("Skin tone normalization is applied to selected emojis.")
                 }
             }
             .navigationTitle("EmojiPickerKit")
@@ -110,7 +114,11 @@ struct ContentView: View {
     private var currentConfig: EmojiKeyboardConfiguration {
         let normalization: EmojiSkinToneNormalization? = switch skinToneMode {
         case 1: .strip
-        case 2: .dark
+        case 2: .light
+        case 3: .mediumLight
+        case 4: .medium
+        case 5: .mediumDark
+        case 6: .dark
         default: nil
         }
         return EmojiKeyboardConfiguration(normalizeSkinTone: normalization)

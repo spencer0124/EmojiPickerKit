@@ -88,7 +88,7 @@ public final class EmojiKeyboardTextField: UITextField {
     private func defaultAccessoryView(dismiss: @escaping () -> Void) -> some View {
         HStack {
             Spacer()
-            Button("완료") { dismiss() }
+            Button("Done") { dismiss() }
                 .padding(.horizontal)
         }
         .frame(height: 44)
@@ -107,7 +107,7 @@ extension EmojiKeyboardTextField: UITextFieldDelegate {
         // Empty string = delete backward — ignore
         guard !string.isEmpty else { return false }
 
-        // emojiOnly filter: isSingleEmoji (single/multiple 모두 Phase 1에서는 동일)
+        // emojiOnly filter
         if config.emojiOnly {
             guard string.isSingleEmoji else { return false }
         }

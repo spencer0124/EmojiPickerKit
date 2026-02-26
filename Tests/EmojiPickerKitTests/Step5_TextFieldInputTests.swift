@@ -137,8 +137,26 @@ final class Step5_TextFieldInputTests: XCTestCase {
         XCTAssertEqual(received, "👋🏽")
     }
 
-    func test_normalize_zwjUnchanged() {
+    func test_normalize_zwjStripRemovesTone() {
         let config = EmojiKeyboardConfiguration(normalizeSkinTone: .strip)
+        let tf = EmojiKeyboardTextField(mode: .multiple(), config: config)
+        var received: String?
+        tf.onEmojiSelected = { received = $0 }
+        _ = simulateInput("👩🏽‍🦰", on: tf)
+        XCTAssertEqual(received, "👩‍🦰")
+    }
+
+    func test_normalize_zwjDarkReplacesTone() {
+        let config = EmojiKeyboardConfiguration(normalizeSkinTone: .dark)
+        let tf = EmojiKeyboardTextField(mode: .multiple(), config: config)
+        var received: String?
+        tf.onEmojiSelected = { received = $0 }
+        _ = simulateInput("👩🏽‍🦰", on: tf)
+        XCTAssertEqual(received, "👩🏿‍🦰")
+    }
+
+    func test_normalize_zwjNilPassesThrough() {
+        let config = EmojiKeyboardConfiguration(normalizeSkinTone: nil)
         let tf = EmojiKeyboardTextField(mode: .multiple(), config: config)
         var received: String?
         tf.onEmojiSelected = { received = $0 }

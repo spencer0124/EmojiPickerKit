@@ -25,17 +25,13 @@ public enum EmojiSkinToneNormalization {
 extension String {
     /// Returns a new string with skin tone modifiers normalized.
     ///
-    /// - ZWJ sequences (contains U+200D) are returned unchanged regardless of mode.
     /// - `.strip`: removes existing skin tone modifiers (U+1F3FB-U+1F3FF).
     /// - Specific tone: removes existing modifiers, then appends the new modifier
     ///   after each `Emoji_Modifier_Base` scalar.
+    /// - ZWJ sequences are handled correctly — the modifier is applied after each
+    ///   `Emoji_Modifier_Base` scalar while preserving ZWJ and non-base components.
     func normalizingSkinTone(to mode: EmojiSkinToneNormalization) -> String {
         guard !isEmpty else { return self }
-
-        // ZWJ sequences → return unchanged (any normalization mode including strip)
-        if unicodeScalars.contains(where: { $0.value == 0x200D }) {
-            return self
-        }
 
         let skinToneRange: ClosedRange<UInt32> = 0x1F3FB...0x1F3FF
 

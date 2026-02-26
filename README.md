@@ -1,19 +1,57 @@
 # EmojiPickerKit
 
-> **Experimental** — This library is in early development. APIs may change without notice between releases. Use at your own risk in production.
+[![iOS version](https://img.shields.io/badge/iOS-16.0%2B-blue)](https://img.shields.io/badge/iOS-16.0%2B-blue)
+[![Framework](https://img.shields.io/badge/Framework-SwiftUI%20%7C%20UIKit-red)](https://img.shields.io/badge/Framework-SwiftUI%20%7C%20UIKit-red)
+[![Language](https://img.shields.io/badge/Language-Swift-orange)](https://img.shields.io/badge/Language-Swift-orange)
+[![Dependencies](https://img.shields.io/badge/Dependencies-0-brightgreen)](https://img.shields.io/badge/Dependencies-0-brightgreen)
 
-A lightweight Swift package that presents the **system emoji keyboard** as a picker for iOS apps. Works with both SwiftUI and UIKit.
+An **undocumented native system emoji keyboard wrapper** for iOS. No custom UI, no bundled emoji assets — just the real keyboard your users already know.
 
-## Requirements
+<div align="center">
+<img src="Resources/record1.gif" alt="EmojiPickerKit demo" width="300">
 
-- iOS 16.0+
-- Swift 5.9+
+</div>
 
-## Installation
+## 🤔 About
 
-### Swift Package Manager
+EmojiPickerKit is a zero-dependency Swift package that presents the **native iOS emoji keyboard** as a standalone emoji picker. Unlike third-party libraries that build custom emoji grids, EmojiPickerKit uses the actual system keyboard — giving your users the same search, recents, skin tones, and categories they use every day.
 
-Add to your `Package.swift`:
+## 🔍 How It Works
+
+Apple's own Reminders app uses a hidden `UITextField` with an undocumented keyboard type (`UIKeyboardType(rawValue: 124)`) to present an emoji-only keyboard. EmojiPickerKit uses the same approach — an invisible text field becomes first responder, and the native emoji keyboard appears.
+
+On top of this base technique, EmojiPickerKit adds:
+
+- Two selection modes (single auto-dismiss or continuous multiple)
+- Emoji-only input filtering
+- Skin tone normalization
+- Haptic feedback
+- Custom accessory views
+- SwiftUI view modifier integration
+- String extensions for emoji validation
+
+#### Limitations
+
+- iOS 16.0+ required
+- The emoji keyboard type (`rawValue: 124`) is undocumented — it is used by Apple internally but is not part of the public `UIKeyboardType` enum
+
+## ⚠️ Important Notes
+
+**`disableDictation` uses a private API.** When `disableDictation` is set to `true`, the library calls `setForceDisableDictation:` on `UITextInputTraits` to hide the dictation button. This is the same approach Apple's Reminders app uses, but it is a **private API** and may cause your app to be **rejected during App Store review**.
+
+The option is `false` by default, so you must explicitly opt in. Use at your own risk in production apps.
+
+## 💻 Installation
+
+EmojiPickerKit is available via the [Swift Package Manager](https://www.swift.org/package-manager/).
+
+With your Xcode project open, go to **File > Add Package Dependencies**, enter the address below into the search field, and click **Add Package**.
+
+```
+https://github.com/spencer0124/EmojiPickerKit
+```
+
+Or add it to your `Package.swift`:
 
 ```swift
 dependencies: [
@@ -21,11 +59,17 @@ dependencies: [
 ]
 ```
 
-Or in Xcode: **File > Add Package Dependencies** and paste the repository URL.
+Then import the module where you want to use it:
 
-## Quick Start
+```swift
+import EmojiPickerKit
+```
+
+## 👀 Usage
 
 ### SwiftUI
+
+Use the `.emojiKeyboard()` view modifier to present the emoji keyboard. Pass a binding to control visibility and a closure to receive the selected emoji.
 
 ```swift
 import EmojiPickerKit
@@ -48,6 +92,8 @@ struct ContentView: View {
 
 ### UIKit
 
+Create an `EmojiKeyboardTextField`, add it to your view, and call `present()` to show the keyboard.
+
 ```swift
 import EmojiPickerKit
 
@@ -61,27 +107,9 @@ textField.onEmojiSelected = { emoji in
 textField.present()
 ```
 
-## API Reference
+## 🎨 Configuration
 
-### `.emojiKeyboard()` View Modifier
-
-```swift
-func emojiKeyboard(
-    isPresented: Binding<Bool>,
-    mode: EmojiKeyboardMode = .single,
-    config: EmojiKeyboardConfiguration = .default,
-    onEmojiSelected: @escaping (String) -> Void
-) -> some View
-```
-
-| Parameter | Description |
-|---|---|
-| `isPresented` | Binding that controls keyboard visibility. |
-| `mode` | `.single` (auto-dismiss) or `.multiple()` (stays open). |
-| `config` | Keyboard configuration (filtering, skin tone, haptics). |
-| `onEmojiSelected` | Called with the selected emoji string. |
-
-### `EmojiKeyboardMode`
+### EmojiKeyboardMode
 
 ```swift
 enum EmojiKeyboardMode {
@@ -106,25 +134,27 @@ enum EmojiKeyboardMode {
 }
 ```
 
-### `EmojiKeyboardConfiguration`
+### EmojiKeyboardConfiguration
+
+Pass an `EmojiKeyboardConfiguration` to customize behavior.
 
 ```swift
-struct EmojiKeyboardConfiguration {
-    var emojiOnly: Bool              // default: true
-    var normalizeSkinTone: EmojiSkinToneNormalization?  // default: nil
-    var hapticFeedback: UIImpactFeedbackGenerator.FeedbackStyle?  // default: .light
-    var disableDictation: Bool       // default: false
-}
+let config = EmojiKeyboardConfiguration(
+    emojiOnly: true,
+    normalizeSkinTone: .strip,
+    hapticFeedback: .light,
+    disableDictation: false
+)
 ```
 
-| Option | Default | Description |
-|---|---|---|
-| `emojiOnly` | `true` | Rejects non-emoji input. |
-| `normalizeSkinTone` | `nil` | Normalize skin tone modifiers (see below). |
-| `hapticFeedback` | `.light` | Haptic style on selection, or `nil` to disable. |
-| `disableDictation` | `false` | Disable dictation button. |
+| Option              | Default  | Description                                                                                          |
+| ------------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `emojiOnly`         | `true`   | Rejects non-emoji input.                                                                             |
+| `normalizeSkinTone` | `nil`    | Normalize skin tone modifiers (see below).                                                           |
+| `hapticFeedback`    | `.light` | Haptic style on selection, or `nil` to disable.                                                      |
+| `disableDictation`  | `false`  | Hide the dictation button. **Uses private API — see [Important Notes](#%EF%B8%8F-important-notes).** |
 
-### `EmojiSkinToneNormalization`
+### EmojiSkinToneNormalization
 
 Controls how skin tone modifiers are handled on selected emoji.
 
@@ -144,22 +174,9 @@ let config = EmojiKeyboardConfiguration(normalizeSkinTone: .strip)
 // User selects 👋🏽 → callback receives 👋
 ```
 
-### `EmojiKeyboardTextField` (UIKit)
-
-```swift
-class EmojiKeyboardTextField: UITextField {
-    init(mode: EmojiKeyboardMode = .single,
-         config: EmojiKeyboardConfiguration = .default)
-
-    var config: EmojiKeyboardConfiguration
-    var onEmojiSelected: ((String) -> Void)?
-
-    func present()   // Show the emoji keyboard
-    func dismiss()   // Hide the emoji keyboard
-}
-```
-
 ### String Extensions
+
+EmojiPickerKit includes handy `String` extensions for working with emoji:
 
 ```swift
 "😊".isSingleEmoji   // true
@@ -174,7 +191,11 @@ class EmojiKeyboardTextField: UITextField {
 "👋🏽".normalizingSkinTone(to: .dark)   // "👋🏿"
 ```
 
-## Contributing
+## 📱 Example Project
+
+Explore the [Example project](Example/) for a demo of single mode, multiple mode, and skin tone normalization in action.
+
+## 🤷 Contributing
 
 Contributions are welcome! Here's how to get started:
 
@@ -190,7 +211,7 @@ Contributions are welcome! Here's how to get started:
    ```
 5. Open a pull request with a clear description.
 
-### Project Structure
+#### Project Structure
 
 ```
 Sources/EmojiPickerKit/
@@ -205,7 +226,7 @@ Example/                              # Demo app (Tuist project)
 Tests/EmojiPickerKitTests/            # Test suite
 ```
 
-### Guidelines
+#### Guidelines
 
 - Keep PRs focused — one feature or fix per PR.
 - Follow existing code style and naming conventions.
