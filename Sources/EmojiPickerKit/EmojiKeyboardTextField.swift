@@ -20,6 +20,9 @@ public final class EmojiKeyboardTextField: UITextField {
     /// Callback invoked when an emoji is entered.
     public var onEmojiSelected: ((String) -> Void)?
 
+    /// Callback invoked when the keyboard is dismissed.
+    public var onDismiss: (() -> Void)?
+
     // MARK: - Private
 
     /// Strong reference to hosting controller — inputAccessoryView is weak
@@ -55,10 +58,22 @@ public final class EmojiKeyboardTextField: UITextField {
         resignFirstResponder()
     }
 
+    @discardableResult
+    override public func resignFirstResponder() -> Bool {
+        let result = super.resignFirstResponder()
+        if result { onDismiss?() }
+        return result
+    }
+
     // MARK: - Setup
 
     private func setup() {
-        keyboardType = UIKeyboardType(rawValue: 124)!
+        // Undocumented emoji keyboard type used by Apple's Reminders app.
+        // This is NOT a public UIKeyboardType case. If Apple changes or removes
+        // this raw value in a future iOS version, a standard keyboard will
+        // silently appear instead of the emoji keyboard. There is no reliable
+        // runtime way to detect this failure.
+        keyboardType = UIKeyboardType(rawValue: 124) ?? .default
         alpha = 0
         delegate = self
 

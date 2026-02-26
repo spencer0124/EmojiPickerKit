@@ -1,12 +1,9 @@
 # Xcode
 *.xcodeproj
+!Example/EmojiPickerExample.xcodeproj
 *.xcworkspace
 xcuserdata/
 DerivedData/
-*.xcscmblueprint
-
-# Tuist generated
-Derived/
 
 # Swift Package Manager
 .build/

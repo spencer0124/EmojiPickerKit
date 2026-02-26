@@ -1,9 +1,9 @@
 import Foundation
 
 extension String {
-    /// Returns `true` if every unicode scalar in this string is part of an emoji rendering.
+    /// Returns `true` if every character in this string is an emoji.
     /// An empty string returns `false`.
-    var isEmoji: Bool {
+    var containsOnlyEmoji: Bool {
         guard !isEmpty else { return false }
 
         // Check each Character (grapheme cluster) individually
@@ -49,6 +49,6 @@ extension String {
     /// Swift's `Character` treats ZWJ sequences as a single grapheme cluster,
     /// so `count == 1` is sufficient.
     var isSingleEmoji: Bool {
-        count == 1 && isEmoji
+        count == 1 && containsOnlyEmoji
     }
 }

@@ -95,10 +95,14 @@ struct ContentView: View {
             }
             .navigationTitle("EmojiPickerKit")
             // ─── Modifiers ───
-            .emojiKeyboard(isPresented: $showSinglePicker, mode: .single) { emoji in
+            .emojiKeyboard(isPresented: $showSinglePicker, mode: .single, onDismiss: {
+                print("Single picker dismissed")
+            }) { emoji in
                 selectedEmoji = emoji
             }
-            .emojiKeyboard(isPresented: $showMultiplePicker, mode: .multiple()) { emoji in
+            .emojiKeyboard(isPresented: $showMultiplePicker, mode: .multiple(), onDismiss: {
+                print("Multiple picker dismissed")
+            }) { emoji in
                 collectedEmojis.append(emoji)
             }
             .emojiKeyboard(
