@@ -30,37 +30,38 @@ extension String {
     ///   after each `Emoji_Modifier_Base` scalar.
     /// - ZWJ sequences are handled correctly — the modifier is applied after each
     ///   `Emoji_Modifier_Base` scalar while preserving ZWJ and non-base components.
-    func normalizingSkinTone(to mode: EmojiSkinToneNormalization) -> String {
+    public func normalizingSkinTone(to mode: EmojiSkinToneNormalization) -> String {
         guard !isEmpty else { return self }
 
         let skinToneRange: ClosedRange<UInt32> = 0x1F3FB...0x1F3FF
-
-        // Step 1: Strip existing skin tone modifiers
-        var stripped = String.UnicodeScalarView()
-        for scalar in unicodeScalars {
-            if skinToneRange.contains(scalar.value) {
-                continue
-            }
-            stripped.append(scalar)
-        }
-
-        // Step 2: If .strip, return base
-        guard let toneScalar = mode.scalar else {
-            return String(stripped)
-        }
-
-        // Step 3: Insert new modifier after each Emoji_Modifier_Base
-        let hasModifierBase = stripped.contains { $0.properties.isEmojiModifierBase }
-        guard hasModifierBase else { return String(stripped) }
+        let toneScalar = mode.scalar
 
         var result = String.UnicodeScalarView()
-        for scalar in stripped {
+        for scalar in unicodeScalars {
+            if skinToneRange.contains(scalar.value) { continue }
             result.append(scalar)
-            if scalar.properties.isEmojiModifierBase {
-                result.append(toneScalar)
+            if let tone = toneScalar, scalar.properties.isEmojiModifierBase {
+                result.append(tone)
             }
         }
 
         return String(result)
+    }
+
+    /// Returns the skin tone of this emoji, or `nil` if no skin tone modifier is present.
+    public var emojiSkinTone: EmojiSkinToneNormalization? {
+        let skinTones: [(ClosedRange<UInt32>, EmojiSkinToneNormalization)] = [
+            (0x1F3FB...0x1F3FB, .light),
+            (0x1F3FC...0x1F3FC, .mediumLight),
+            (0x1F3FD...0x1F3FD, .medium),
+            (0x1F3FE...0x1F3FE, .mediumDark),
+            (0x1F3FF...0x1F3FF, .dark),
+        ]
+        for scalar in unicodeScalars {
+            for (range, tone) in skinTones {
+                if range.contains(scalar.value) { return tone }
+            }
+        }
+        return nil
     }
 }

@@ -209,6 +209,26 @@ EmojiPickerKit includes handy `String` extensions for working with emoji:
 
 "👋🏽".normalizingSkinTone(to: .strip)  // "👋"
 "👋🏽".normalizingSkinTone(to: .dark)   // "👋🏿"
+
+// Emoji extraction
+"Hello 😊 World 🔥".emojis           // ["😊", "🔥"]
+"no emoji here".emojis               // []
+
+// Emoji count
+"😊🔥".emojiCount                    // 2
+"👨‍👩‍👧‍👦".emojiCount                // 1 (ZWJ = one glyph)
+
+// Remove emoji
+"Hello 😊 World".removingEmojis      // "Hello  World"
+"Hello 😊 World".strippingEmojis     // "Hello World"
+
+// Skin tone detection
+"👋🏽".emojiSkinTone                  // .medium
+"👋".emojiSkinTone                    // nil
+
+// ZWJ decomposition
+"👨‍👩‍👧‍👦".emojiComponents             // ["👨", "👩", "👧", "👦"]
+"😊".emojiComponents                 // ["😊"]
 ```
 
 ## Example Project
@@ -239,8 +259,8 @@ Sources/EmojiPickerKit/
 ├── EmojiKeyboardModifier.swift       # SwiftUI wrapper + view modifier
 ├── EmojiKeyboardConfiguration.swift  # Configuration struct
 └── Extensions/
-    ├── String+Emoji.swift            # containsOnlyEmoji, isSingleEmoji
-    └── String+SkinTone.swift         # Skin tone normalization
+    ├── String+Emoji.swift            # containsOnlyEmoji, isSingleEmoji, emojis, emojiCount, removingEmojis, strippingEmojis, emojiComponents
+    └── String+SkinTone.swift         # Skin tone normalization, emojiSkinTone
 
 Example/                              # Demo app (Xcode project)
 Tests/EmojiPickerKitTests/            # Test suite

@@ -1,5 +1,6 @@
 import UIKit
 import SwiftUI
+import os.log
 
 /// Defines how the emoji keyboard operates.
 public enum EmojiKeyboardMode {
@@ -11,6 +12,11 @@ public enum EmojiKeyboardMode {
 
 /// A UITextField configured to show the system emoji keyboard.
 public final class EmojiKeyboardTextField: UITextField {
+
+    // MARK: - Constants
+
+    private static let emojiKeyboardRawValue = 124
+    private static let logger = Logger(subsystem: "EmojiPickerKit", category: "EmojiKeyboardTextField")
 
     // MARK: - Public properties
 
@@ -49,12 +55,16 @@ public final class EmojiKeyboardTextField: UITextField {
 
     // MARK: - Public methods
 
-    public func present() {
+    @discardableResult
+    public func present() -> Bool {
+        assert(Thread.isMainThread, "present() must be called on the main thread")
+        applyDictationSetting()
         hapticGenerator?.prepare()
-        becomeFirstResponder()
+        return becomeFirstResponder()
     }
 
     public func dismiss() {
+        assert(Thread.isMainThread, "dismiss() must be called on the main thread")
         resignFirstResponder()
     }
 
@@ -71,9 +81,13 @@ public final class EmojiKeyboardTextField: UITextField {
         // Undocumented emoji keyboard type used by Apple's Reminders app.
         // This is NOT a public UIKeyboardType case. If Apple changes or removes
         // this raw value in a future iOS version, a standard keyboard will
-        // silently appear instead of the emoji keyboard. There is no reliable
-        // runtime way to detect this failure.
-        keyboardType = UIKeyboardType(rawValue: 124) ?? .default
+        // appear instead of the emoji keyboard.
+        if let emojiType = UIKeyboardType(rawValue: Self.emojiKeyboardRawValue) {
+            keyboardType = emojiType
+        } else {
+            keyboardType = .default
+            Self.logger.warning("Emoji keyboard type (rawValue \(Self.emojiKeyboardRawValue)) unavailable — falling back to default keyboard")
+        }
         alpha = 0
         delegate = self
 
@@ -81,7 +95,18 @@ public final class EmojiKeyboardTextField: UITextField {
         isAccessibilityElement = false
         accessibilityElementsHidden = true
 
+        applyDictationSetting()
         setupAccessoryView()
+    }
+
+    /// Uses the same private API that Apple's Reminders app uses to hide the
+    /// dictation button on the emoji keyboard.
+    private func applyDictationSetting() {
+        let selector = NSSelectorFromString("setForceDisableDictation:")
+        guard let imp = class_getMethodImplementation(object_getClass(self), selector) else { return }
+        typealias SetBoolIMP = @convention(c) (AnyObject, Selector, Bool) -> Void
+        let function = unsafeBitCast(imp, to: SetBoolIMP.self)
+        function(self, selector, config.disableDictation)
     }
 
     private func setupAccessoryView() {

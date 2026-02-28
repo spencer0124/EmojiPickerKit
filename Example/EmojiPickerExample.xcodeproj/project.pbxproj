@@ -3,19 +3,21 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		30FCC6EDD074176244E10E1B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBD14203142D96E76C807A1 /* ContentView.swift */; };
 		6B0D1C7F9BF7C107969C72CD /* EmojiPickerExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23605B271B15CEC14D70D714 /* EmojiPickerExampleApp.swift */; };
 		A1B2C3D4E5F60718293A4B5C /* EmojiPickerKit in Frameworks */ = {isa = PBXBuildFile; productRef = D4E5F6071829A1B2C3D4E5F6 /* EmojiPickerKit */; };
+		F1A2B3C4D5E6F70819203141 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1A2B3C4D5E6F70819203142 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		23605B271B15CEC14D70D714 /* EmojiPickerExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiPickerExampleApp.swift; sourceTree = "<group>"; };
 		95625FB1E63A158226CBAE6B /* EmojiPickerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EmojiPickerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDBD14203142D96E76C807A1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F1A2B3C4D5E6F70819203142 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +35,7 @@
 		4E4A8A095A6425FC086CF65B /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				F1A2B3C4D5E6F70819203142 /* Assets.xcassets */,
 				DDBD14203142D96E76C807A1 /* ContentView.swift */,
 				23605B271B15CEC14D70D714 /* EmojiPickerExampleApp.swift */,
 			);
@@ -98,7 +101,7 @@
 			);
 			mainGroup = 5B0B0CF734E06A7FED4EF2C8;
 			packageReferences = (
-				E1F2A3B4C5D6071829304150 /* XCLocalSwiftPackageReference "../.." */,
+				E1F2A3B4C5D6071829304150 /* XCLocalSwiftPackageReference ".." */,
 			);
 			productRefGroup = 6CF263BB3F9103E5345827BC /* Products */;
 			projectDirPath = "";
@@ -114,6 +117,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1A2B3C4D5E6F70819203141 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,8 +141,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 95HGXTX76L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = EmojiPicker;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -149,7 +156,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.emojipickerkit;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoyoong.emojipickerkit;
 				PRODUCT_NAME = EmojiPickerExample;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -221,8 +229,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 95HGXTX76L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = EmojiPicker;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -233,13 +244,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.emojipickerkit;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zoyoong.emojipickerkit;
 				PRODUCT_NAME = EmojiPickerExample;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-					"$(inherited)",
-					DEBUG,
-				);
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -322,9 +331,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		E1F2A3B4C5D6071829304150 /* XCLocalSwiftPackageReference "../.." */ = {
+		E1F2A3B4C5D6071829304150 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../..";
+			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 

@@ -82,8 +82,8 @@ public struct EmojiKeyboardRepresentable: UIViewRepresentable {
                   tf === textField else { return }
 
             isUpdating = true
-            isPresented = false
             DispatchQueue.main.async { [weak self] in
+                self?.isPresented = false
                 self?.isUpdating = false
             }
         }
